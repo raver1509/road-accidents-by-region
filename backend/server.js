@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import cors from 'cors';
 import express from 'express';
 import connectMongoDB from './db/connectMongoDB.js';
-import mongoose from "mongoose";
 import Voivodeship from "./models/voivodeship.model.js";
 
 const app = express();
@@ -47,6 +46,26 @@ app.post('/addStats', async (req, res) => {
         res.status(201).json(newVoivodeship);
     } catch (err) {
         res.status(500).json({ error: 'An error occurred while saving the data' });
+    }
+});
+
+app.get('/govData2023', async (req, res) => {
+    try {
+      const response = await fetch('https://api.dane.gov.pl/media/resources/20240408/Zdarzenia_w_ruchu_drogowych_w_2023_r._-_podzia%C5%82_na_wojew%C3%B3dztwa.csv');
+      const data = await response.text();
+      res.send(data);
+    } catch (error) {
+      res.status(500).send('Error fetching data');
+    }
+});
+
+app.get('/govData2018', async (req, res) => {
+    try {
+      const response = await fetch('https://dane.gov.pl/media/resources/20190319/Wojew%C3%B3dztwa.csv');
+      const data = await response.text();
+      res.send(data);
+    } catch (error) {
+      res.status(500).send('Error fetching data');
     }
 });
 
