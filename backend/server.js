@@ -4,6 +4,10 @@ import express from 'express';
 import connectMongoDB from './db/connectMongoDB.js';
 import Voivodeship from "./models/voivodeship.model.js";
 import iconv from 'iconv-lite';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
+import User from "../models/user.model.js";
 
 const app = express();
 const port = 3000;
@@ -13,6 +17,8 @@ dotenv.config();
 app.use(cors());
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.get('/getStats', async (req, res) => {
     try {
@@ -83,6 +89,99 @@ app.get('/govData2018', async (req, res) => {
         res.status(500).send('Error fetching data');
     }
 });
+
+export const protectRoute = async (req, res, next) => {
+    try {
+        const token = req.cookies.jwt;
+        if (!token) {
+            return res.status(401).json({ error: "Unauthorized: No Token Provided" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        if(!decoded) {
+            return res.status(401).json({error: "Unauthorized: Invalid Token"});
+        }
+
+        const user = await User.findById(decoded.userId).select("-password");
+
+        if(!user) {
+            return res.status(404).json({ error: "User not found"});
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        console.log("Error in protectRoute middleware", error.message);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+export const signup = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: "Invalid email format" });
+        }
+
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ error: "Email is already taken" });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ error: "Password must be at least 6 characters long" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({
+            email,
+            password: hashedPassword,
+        });
+
+        if (newUser) {
+            await newUser.save();
+            generateTokenAndSetCookie(newUser._id, res);
+
+            res.status(201).json({
+                _id: newUser._id,
+                email: newUser.email,
+            });
+        } else {
+            res.status(400).json({ error: "Invalid user data" });
+        }
+    } catch (error) {
+        console.log("Error in signup controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
+
+        if (!user || !isPasswordCorrect) {
+            return res.status(400).json({ error: "Invalid email or password" });
+        }
+
+        generateTokenAndSetCookie(user._id, res);
+
+        res.status(200).json({
+            _id: user._id,
+            email: user.email,
+        });
+    } catch (error) {
+        console.log("Error in login controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+app.use(express.urlencoded({ extended: true })); 
 
 console.log(process.env.MONGO_URI);
 
