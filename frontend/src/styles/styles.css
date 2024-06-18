@@ -1,0 +1,63 @@
+.app-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.left-panel {
+  flex: 1;
+  margin-right: 20px;
+  max-width: 600px; /* Ograniczenie szerokości dla tabeli */
+}
+
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center; /* Wyśrodkowanie zawartości pionowo */
+}
+
+.data-table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: #f2f2f2;
+}
+
+.export-buttons {
+  margin-top: 20px;
+}
+
+.province-data {
+  margin-top: 20px;
+}
+
+/* Nowe style dla mniejszych wykresów */
+.chart-small {
+  height: 100px;
+  margin-bottom: 20px; /* Dodatkowy margines dla wykresów */
+}
+
+/* Dostosowanie MapContainer */
+.map-container {
+  width: 100%;
+  max-width: 400px; /* Ograniczenie szerokości dla mapy */
+}
+
+/* Nowe style dla panelu z wykresami */
+.chart-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

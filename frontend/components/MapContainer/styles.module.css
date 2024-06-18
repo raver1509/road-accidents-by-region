@@ -1,0 +1,5 @@
+.mapContainer {
+  width: 90%; /* Szerokość mapy ustawiona na 60% dostępnego miejsca */
+  height: 600px; /* Wysokość mapy ustawiona na 600px */
+  margin: 0 auto; /* Automatyczne centrowanie mapy */
+}

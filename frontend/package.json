@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "d3-geo": "^3.1.1",
     "gsap": "^3.12.5",
@@ -17,10 +18,12 @@
     "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
+    "react-chartkick": "^0.5.3",
     "react-dom": "^18.2.0",
     "react-simple-maps": "^3.0.0",
     "recharts": "^2.12.7",
-    "sass": "^1.77.5"
+    "sass": "^1.77.5",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",

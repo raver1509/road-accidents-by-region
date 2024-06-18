@@ -1,0 +1,10 @@
+.chartContainer {
+  width: 100%; /* Szerokość kontenera na wykresy */
+  max-width: 300px; /* Maksymalna szerokość kontenera na wykresy */
+  margin-top: 20px;
+  margin-left: 20px; /* Margines z lewej strony */
+}
+
+.chartTitle {
+  margin-top: 20px;
+}
