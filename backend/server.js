@@ -7,7 +7,7 @@ import iconv from 'iconv-lite';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
-import User from "../models/user.model.js";
+import User from "./models/user.model.js";
 
 const app = express();
 const port = 3000;

@@ -20,6 +20,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-chartkick": "^0.5.3",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1",
     "react-simple-maps": "^3.0.0",
     "recharts": "^2.12.7",
     "sass": "^1.77.5",
