@@ -5,8 +5,36 @@ import MapContainer from '../components/MapContainer/MapContainer';
 import ChartComponent from '../components/ChartComponent/ChartComponent';
 import axios from 'axios';
 import xmljs from 'xml-js';
+import toast from 'react-hot-toast';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 function App() {
+  const queryClient = useQueryClient();
+  const { mutate: logout } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/auth/logout", {
+          method: "POST",
+          credentials: "include", // Add this line to include credentials
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+      } catch (error) {
+        throw new Error(error.message || "Network error");
+      }
+    },
+    onSuccess: () => {
+      toast.success("Logged out successfully");
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+    },
+    onError: (error) => {
+      toast.error(`Logout failed: ${error.message}`);
+    }
+  });
+
   const [data2023, setData2023] = useState([]);
   const [loading2023, setLoading2023] = useState(true);
   const [error2023, setError2023] = useState(null);
@@ -150,9 +178,15 @@ function App() {
     }, 0);
   };
 
+ 
+
   return (
     <div className="app-container">
       <div className="left-panel">
+        <button onClick={(e) => {
+          e.preventDefault();
+          logout();
+        }} className="logout-button">Logout</button>
         <h1>Dane z ruchu drogowego</h1>
         <div className="year-selector">
           <label>
