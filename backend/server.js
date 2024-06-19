@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 app.use(express.json({ limit: "100mb" }));
 const corsOptions = {
-    origin: 'http://localhost:5173', // Replace with your frontend URL
+    origin: 'http://localhost:5173',
     credentials: true,
 };
 app.use(cors(corsOptions));
@@ -27,41 +27,46 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 
-app.get('/getStats', async (req, res) => {
+app.get('/retrieveData', async (req, res) => {
     try {
-        const stats = await Voivodeship.find();
-        res.json(stats);
+        const data = await Voivodeship.find();
+        res.status(200).json(data);
     } catch (err) {
-        res.status(500).json({ error: 'An error occurred while fetching data' });
+        res.status(500).json({ error: 'An error occurred while retrieving the data' });
     }
 });
 
-app.post('/addStats', async (req, res) => {
+app.post('/saveData', async (req, res) => {
     const { name, stats2018, stats2023 } = req.body;
 
-    if (!name || !stats2018 || !stats2023) {
-        return res.status(400).json({ error: 'Please provide all required fields: name, stats2018, stats2023' });
-    }
-
     try {
-        const existingVoivodeship = await Voivodeship.findOne({ name });
+        let voivodeship = await Voivodeship.findOne({ name });
 
-        if (existingVoivodeship) {
-            return res.status(400).json({ error: 'Voivodeship already exists' });
+        if (voivodeship) {
+            if (stats2018) {
+                voivodeship.stats2018 = stats2018;
+            }
+            if (stats2023) {
+                voivodeship.stats2023 = stats2023;
+            }
+            await voivodeship.save();
+            return res.status(200).json(voivodeship);
         }
 
-        const newVoivodeship = new Voivodeship({
+        voivodeship = new Voivodeship({
             name,
-            stats2018,
-            stats2023
+            stats2018: stats2018 || {},
+            stats2023: stats2023 || {}
         });
 
-        await newVoivodeship.save();
-        res.status(201).json(newVoivodeship);
+        await voivodeship.save();
+        res.status(201).json(voivodeship);
     } catch (err) {
+        console.error('Error saving data:', err);
         res.status(500).json({ error: 'An error occurred while saving the data' });
     }
 });
+
 
 app.get('/govData2023', async (req, res) => {
     try {

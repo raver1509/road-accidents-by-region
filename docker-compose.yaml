@@ -1,14 +1,33 @@
 version: '3.3'
+
 services:
-    mongo:
-        ports:
-            - '27017:27017'
-        container_name: dkrcomp-mongo
-        restart: always
-        logging:
-            options:
-                max-size: 1g
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=admin
-            - MONGO_INITDB_ROOT_PASSWORD=root
-        image: mongo
+  mongo:
+    container_name: dkrcomp-mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+    restart: always
+    logging:
+      options:
+        max-size: 1g
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=root
+
+  backend:
+    build:
+      context: ./backend    # Path to backend Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend    # Path to frontend Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    restart: always

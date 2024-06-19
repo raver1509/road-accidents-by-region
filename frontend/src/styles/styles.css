@@ -75,3 +75,29 @@
 .logout-button:hover {
   background-color: #ff1a1a;
 }
+
+.data-actions button {
+  padding: 10px 20px;
+  margin-right: 5px;
+  margin-top: 5px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.data-actions button:hover {
+  background-color: #0056b3;
+}
+
+.data-actions button:active {
+  background-color: #003f7f;
+}
+
+.data-actions button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
